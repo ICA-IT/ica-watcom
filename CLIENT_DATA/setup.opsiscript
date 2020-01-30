@@ -1,0 +1,109 @@
+; ----------------------------------------------------------------
+; Copyright (c) uib gmbh (www.uib.de)
+; This sourcecode is owned by uib
+; and published under the Terms of the General Public License.
+; credits: http://www.opsi.org/en/credits/
+; ----------------------------------------------------------------
+
+;****************************************
+; SETUPTYPE      nsis
+;****************************************
+; PRODUCTID      ica-watcom
+; SETUPFILE      open-watcom-c-win32-1.9.exe
+;****************************************
+; LICENSE        false     
+; PRODUCTDESC    Install the open-watcom c++ compiler and its various tools
+; PRODUCTNAME    ICA-WATCOM
+; PRODUCTSIZE    128M
+; PRODUCTVER     1.9
+;****************************************
+; SETUPSCRIPT    setup.opsiscript
+; UNINSSCRIPT    uninstall.opsiscript
+;****************************************
+; MSIID          
+; USE-MST        
+; INSTALLDIR     \WATCOM
+;****************************************
+; TIMESTAMP      1/30/2020 12:00:05
+;****************************************
+
+[Actions]
+requiredWinstVersion >= "4.11.4.3"
+ScriptErrorMessages = false
+
+DefVar $SetupType$
+DefVar $ProductId$ 
+DefVar $Setupfile$ 
+DefVar $InstallDir$
+DefVar $MinimumSpace$
+DefVar $ExitCode$
+DefVar $ErrorMsg$
+DefVar $LicenseRequired$
+DefVar $LicenseKey$
+DefVar $LicensePool$
+DefVar $MsiId$
+DefVar $NsisInstallBatch$
+DefVar $LogDir$
+
+Set $LogDir$ = "%opsiLogDir%"
+
+include_append "%ScriptPath%\check_nsis_exitcode.opsiscript"
+
+; ----------------------------------------------------------------
+Set $SetupType$       = "nsis"
+; ----------------------------------------------------------------
+
+; $ProductId$ is the name of the product in opsi, only lower letters, no umlauts, no white spaces, use '-' as a seperator
+Set $ProductId$       = "ica-watcom"
+Set $Setupfile$       = "open-watcom-c-win32-1.9.exe"
+; the path where we find the product after the installation
+Set $InstallDir$      = "\WATCOM"
+Set $LicenseRequired$ = "false"
+Set $LicensePool$     = "p_" + $ProductId$
+Set $MsiId$           = ""
+Set $MinimumSpace$    = "128000000"
+; ----------------------------------------------------------------
+; ----------------------------------------------------------------
+
+if not(HasMinimumSpace ("%SystemDrive%", $MinimumSpace$))
+   LogError "Not enough space on %SystemDrive%, " + $MinimumSpace$ + " on drive %SystemDrive% needed for " + $ProductId$
+   isFatalError "No Space"
+   ; Stop process and set installation status to failed
+else
+   comment "Show product picture"
+   ShowBitmap "%ScriptPath%\" + $ProductId$ + ".png" $ProductId$
+
+   if FileExists("%ScriptPath%\delsub.opsiscript")
+      comment "Start uninstall sub section"
+      Sub "%ScriptPath%\delsub.opsiscript"
+   endif
+   
+   Message "Installing " + $ProductId$ + " ..."
+   
+ 
+   if ($SetupType$ = "nsis")
+      Set $NsisInstallBatch$ = "%ScriptPath%\open-watcom-c-win32-1.9.exe -s"
+   endif
+   
+   comment "Start setup program"
+   ChangeDirectory "%SCRIPTPATH%"
+   ;----------------------------------------------
+   Winbatch_install_nsis
+   ;----------------------------------------------
+   Sub_check_exitcode	
+endif
+
+
+; ----------------------------------------------------------------
+; install section
+; ----------------------------------------------------------------
+
+[Winbatch_install_nsis]
+;NSIS Nullsoft Scriptable Install System 
+$NsisInstallBatch$
+
+; ----------------------------------------------------------------
+
+; ----------------------------------------------------------------
+; ----------------------------------------------------------------
+

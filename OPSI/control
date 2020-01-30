@@ -1,0 +1,29 @@
+[Package]
+version: 1
+depends: 
+
+[Product]
+type: localboot
+id: ica-watcom
+name: ICA-WATCOM
+description: Install the open-watcom c++ compiler and its various tools
+advice: 
+version: 1.9
+priority: 0
+licenseRequired: False
+productClasses: 
+setupScript: setup.opsiscript
+uninstallScript: uninstall.opsiscript
+updateScript: 
+alwaysScript: 
+onceScript: 
+customScript: 
+userLoginScript: 
+
+[Changelog]
+ica-watcom (1.9-1) stable; urgency=low
+
+	* initial: created by opsi-setup-detector
+
+ -- opsisetupdetector.exe <info@uib.de>  1/30/2020 12:00:05
+

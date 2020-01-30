@@ -1,0 +1,37 @@
+; Copyright (c) uib gmbh (www.uib.de)
+; This sourcecode is owned by uib gmbh
+; and published under the Terms of the General Public License.
+; credits: http://www.opsi.org/en/credits/
+
+include_append "%ScriptPath%\check_nsis_exitcode.opsiscript"
+
+DefVar $found$
+DefVar $UninstallProgram$
+
+Set $found$     = "false"
+Set $MsiId$     = ''
+
+Message "Uninstalling " + $ProductId$ + " ..."
+
+if ($SetupType$ = "nsis2")
+   Set $UninstallProgram$ = $InstallDir$ + "\uninstall.exe"
+   if (not($InstallDir$ = '')) and FileExists($UninstallProgram$)
+      comment "Uninstall program found, starting uninstall"
+      Winbatch_uninstall_nsis /WaitforProcessending "Au_.exe" /Timeoutseconds 10
+      sub_check_exitcode
+   endif
+endif
+
+if (not($InstallDir$ = '')) and (not($InstallDir$ = "not used"))
+   Files_uninstall
+endif
+
+;-----------------------------------------------------
+
+[Winbatch_uninstall_nsis]
+"$UninstallProgram$" /S
+;-----------------------------------------------------
+
+[Files_uninstall]
+del -sf "$InstallDir$\"
+;-----------------------------------------------------
